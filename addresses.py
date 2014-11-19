@@ -22,25 +22,27 @@ for row in csv_f:
   if firstLine:
     firstLine = False
     continue
-  print row[1]+' '+row[2]
+  print row[0]
   try:
     verifiedAddress = lob.Verification.create(
-      address_line1=row[4],
+      address_line1=row[1],
+      address_line2=row[2],
+      address_city=row[3],
+      address_state=row[4],
       address_zip=row[5],
-      address_country='US'
+      address_country=row[6]
     )
     verifiedRecipientPostcard = lob.Address.create(
-      name = row[1]+' '+row[2],
+      name = row[0],
       address_line1 = verifiedAddress.address.address_line1,
       address_line2 = verifiedAddress.address.address_line2,
       address_city = verifiedAddress.address.address_city,
       address_state = verifiedAddress.address.address_state,
-      address_country = 'US',
       address_zip = verifiedAddress.address.address_zip,
-      email = row[3]
+      address_country = verifiedAddress.address.address_country,
     )
     sentPostcard = lob.Postcard.create(
-      name=row[0],
+      name=row[7],
       to_address=verifiedRecipientPostcard,
       from_address=returnAddress,
       template=1,
@@ -49,9 +51,9 @@ for row in csv_f:
       back='pathtofile'
     )
   except Exception as e: 
-    print row[1]+' '+row[2]+str(e)
+    print row[0]+' '+str(e)
 
-    data = row[1] + ' ' + row[2]
+    data = row[0]
     errorMessage = str(e)
     writeRow = [data, errorMessage]
     allData.append(writeRow)
